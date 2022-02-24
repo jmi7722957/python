@@ -123,7 +123,6 @@
 
 	function createImg(data,page){
 		var html="";
-		// console.log(page)
 		var oneList=data.pages[page-1];
 		oneList.forEach(element => {
 			html+='<img src="/localc'+data.path.substr(2)+'/'+element+'"><br/>';
