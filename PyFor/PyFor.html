@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>PyFor图片浏览器</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<style type="text/css">
+	*{
+		margin: 0px;
+		padding: 0px;
+	}
+	.main{
+		/* 居中 */
+		text-align:center;
+	}
+	img{
+		width: 700px;
+		/* 图片上下间距 */
+		vertical-align: bottom;
+	}
+	ul{
+		list-style:none;
+	}
+	li {
+    	height: 150px;
+	}
+	button {
+		height: 140px;
+		width: 70px;
+	}
+</style>
+
+<script src="./jquery-1.11.1.min.js"></script>
+
+</head>
+
+<body>
+	<div class="head">
+	</div>
+	<div class="main">
+	</div>
+	<div class="foot" style="position: fixed;left:80%;top:10%;">
+		<ul>
+			<li>
+				<button onclick="last()">上一页</button>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<button onclick="up()">顶部</button>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<div id="seleDiv" style="height: 100%;">
+					<input type="number" name="pageIndex" id="pageIndex" value="1" style="float: left;width: 40%;height: 90%;font-size:36px;">
+					<button onclick="selectPage()" style="float: left;width:70px">跳转</button>
+				</div>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<button onclick="down()">底部</button>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<button onclick="next()">下一页</button>
+			</li>
+		</ul>
+	</div>
+</body>
+ 
+<script type="text/javascript">
+	var page=1;
+	var jsObject = {
+	};
+	Object.defineProperty(jsObject,'page',{
+		set: function(value) {
+			page=value;
+			$('#pageIndex').val(page);
+		},
+		get: function(){
+			return page;
+		}
+	});
+
+	$(function () {
+		getUrl();
+    });
+
+
+	function getUrl(){
+		var query = window.location.search.substr(1);
+		// console.log(window.location.search.substr(1))
+		var root=query.split("=")[1];
+		// console.log(root);
+		if(root){
+			sendGet(root);
+		}
+		return false;
+	}
+
+	var imgData;
+	function sendGet(root){
+		$.ajax({
+            cache: true,
+            type: "POST",
+			data:{"root":root},
+            url:"http://localhost:8066/api/getPyFor",
+            async: true,
+            success: function(data) {
+				imgData=data;
+            	// console.log(data);
+				createImg(imgData,1);
+            },
+			error: function(request) {
+				alert("Connection error");
+			},
+		});
+		return false;
+	}
+
+	function createImg(data,page){
+		var html="";
+		// console.log(page)
+		var oneList=data.pages[page-1];
+		oneList.forEach(element => {
+			html+='<img src="/localc'+data.path.substr(2)+'/'+element+'"><br/>';
+		});
+		html=html.replaceAll('\\','/');
+		$('.main').html(html);
+		// console.log(html);
+	}
+	function next(){
+		// console.log(jsObject.page);
+		// console.log(imgData.pages);
+		if(imgData.pages[jsObject.page]){
+			jsObject.page=jsObject.page+1
+			createImg(imgData,jsObject.page)
+		}else{
+			alert('已是最后一页');
+		}
+	}
+	function last(){
+		if(jsObject.page>1){
+			jsObject.page=jsObject.page-1;
+			createImg(imgData,jsObject.page)
+		}else{
+			alert('已是第一页');
+		}
+	}
+	function selectPage(){
+		var page=$('#pageIndex').val();
+		if(imgData.pages[page-1]){
+			jsObject.page=page;
+			createImg(imgData,jsObject.page)
+		}else{
+			alert('找不到页数');
+		}
+	}
+	function up()
+    {
+		//window.scrollMaxY窗口的y最大值
+		window.scrollTo(0,window.scrollMaxY);
+    }
+	
+    function down()
+    {
+		window.scrollTo(0,0);
+    }
+</script>
+
+</html>
