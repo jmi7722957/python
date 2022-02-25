@@ -1,47 +1,625 @@
-str='''
-1 fid bigint 8 √ fid
-2 listno varchar 30 单号
-3 companyid int 4 门店id
-4 fstate smallint 2 状态
-5 sumqty decimal(18,2) 总数量
-6 summount decimal(28,4) 总金额
-7 unitid int 4 供应商id
-8 fdate datetime 8 开单日期
-9 indate datetime 8 交货日期
-10 suminqty decimal(18,2) 到货数量
-11 ordermount decimal(28,4) 订金金额
-12 manager varchar 50 经办人
-13 checker varchar 50 审核人
-14 checkdate datetime 8 审核日期
-15 notchecker varchar 50 反审核人
-16 notcheckdate datetime 8 反审核日期
-17 createtime datetime 8 创建时间
-18 user varchar 50 制单人
-19 lastupdater varchar 50 最后更新人
-20 lastupdatetime datetime 8 最后更改时间
-21 flag smallint 2 标志位
-22 ischecklist bit 1 核对
-23 checklister varchar 50 核对人
-24 checklistdate datetime 8 核对日期
-25 isdelete bit 1 已删除
-26 canceler varchar 50 撤销人
-27 canceldate datetime 8 撤销日期
-28 remark varchar 200 备注
-'''
-def change(str):
-    #去除换行
-    list=str.split('\n')
-    text=""
-    for index in range(len(list)):
-        one=list[index].strip()
-        if one!="":
-            list[index]=one
-            oneList=one.split(' ')
-            #解析成list
-            gg=index
-            textone='"'+oneList[1]+'":"1",\n'
-            text+=textone
-    print(text)
+from fileinput import close
 
-    
-change(str)
+
+# 把旧的cols变成新的clos
+
+from dataclasses import field
+import re
+
+newText="""
+FID
+ListNo
+CompanyID
+Fstate
+SumQTY
+SumMount
+UnitID
+Fdate
+InDate
+SumInQTY
+OrderMount
+Manager
+Checker
+CheckDate
+NotChecker
+NotCheckDate
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Flag
+IsCheckList
+CheckLister
+CheckListDate
+IsDelete
+Canceler
+CancelDate
+Remark
+ListNo
+CompanyID
+Fstate
+SumQTY
+SumMount
+UnitID
+Fdate
+InDate
+SumAbateMount
+RealMount
+Manager
+Checker
+CheckDate
+NotChecker
+NotCheckDate
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+SumShipMount
+SumOtherMount
+Remark
+Flag
+IsCheckList
+CheckLister
+CheckListDate
+IsRedList
+IsDelete
+OrderID
+RedListTime
+DeleteTime
+MasterID
+GoodsID
+QTY
+InQTY
+Price
+Color
+Remark
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Findex
+ListNo
+CompanyID
+Fstate
+SumQTY
+SumMount
+UnitID
+Fdate
+OutDate
+SumOutQTY
+OrderMount
+Manager
+Checker
+CheckDate
+NotChecker
+NotCheckDate
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Remark
+ClientName
+MobileNo
+IsCheckList
+CheckLister
+CheckListDate
+IsDelete
+QuotedPricer
+QuotedPriceDate
+DistStocker
+DistStockDate
+Flag
+Canceler
+CancelDate
+FID
+ListNo
+CompanyID
+Fstate
+SumQTY
+SumMount
+UnitID
+Fdate
+RealMount
+SumAbateMount
+OrderMount
+Manager
+Checker
+CheckDate
+NotChecker
+NotCheckDate
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Remark
+ClientName
+MobileNo
+Flag
+IsCheckList
+CheckLister
+CheckListDate
+IsRedList
+IsDelete
+OrderID
+OrderDetailID
+vipcardid
+CarID
+SumServiceMount
+SumSBQTY
+SumSBMount
+RepairType
+Repair
+Mileage
+ComeTime
+GoTime
+GetCarPerson
+ChangeMileage
+OtherMount
+OtherMountType
+RedListTime
+DeleteTime
+FID
+MasterID
+ServiceID
+FHour
+Price
+Type
+QTY
+Discount
+Disprice
+integral
+Remark
+Repair
+Saler
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Findex
+FID
+MasterID
+GoodsID
+QTY
+CostPrice
+DetailType
+OrgiPrice
+Price
+Discount
+Disprice
+LessMount
+Color
+Remark
+Wname
+BatchNo
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+integral
+Findex
+WarehouseID
+OrderDetailID
+FID
+ListNo
+CompanyID
+IsStop
+Fname
+Type
+BeginTime
+EndTime
+isonlyvip
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Remark
+IsDelete
+Checker
+CheckDate
+NotChecker
+NotCheckDate
+ListNo
+CompanyID
+Fstate
+SumMount
+Fdate
+Manager
+Checker
+CheckDate
+NotChecker
+NotCheckDate
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Remark
+IsCheckList
+CheckLister
+CheckListDate
+IsDelete
+Flag
+IsRedList
+RedListTime
+DeleteTime
+MasterID
+GoodsID
+QTY
+Price
+Color
+Wname
+WarehouseID
+Remark
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Findex
+BatchNo
+WarehouseID
+GoodsID
+SQTY
+Price
+YLQTY
+BatchNo
+Color
+Wname
+StockMount
+ShareMount
+Flag
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+WarehouseID
+GoodsID
+QTY
+Wname
+Color
+DetailID
+MasterID
+Flag
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+StockFlag
+ListNo
+CompanyID
+UnitID
+Mount
+HadpayMount
+ForeMount
+AbateMount
+vipcard_no
+payintegral
+vippaymount
+vipcardmount
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Remark
+Flag
+AddIntegral
+IsRedList
+RedListTime
+DeleteTime
+MasterID
+ListID
+Mount
+SumMount
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Remark
+ListFlag
+CompanyID
+SumMount
+HadpayMount
+AbateMount
+Fdate
+UnitID
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Flag
+Remark
+IsFirst
+SubjectID
+AccountID
+Abatemount
+Fdate
+UnitID
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Remark
+Flag
+Manager
+IsRedList
+RedlistTime
+FYear
+FMonth
+Fdate
+BeginDate
+EndDate
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+IsBill
+Remark
+AccountID
+Mount
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Remark
+Fdate
+InCompanyID
+InAccountID
+Checker
+CheckDate
+NotChecker
+NotCheckDate
+Fdate
+Fno
+ReChecker
+Manager
+Super
+CreateTime
+Fuser
+LastUpdater
+LastUpdateTime
+Remark
+Fstate
+Checker
+CheckDate
+NotChecker
+NotCheckDate
+"""
+
+cols='''
+                {
+                    field: 'listno',
+                    width: 120,
+                    sort: true,
+                    title: '单号',
+
+                },
+                {
+                    field: 'ischecklist',
+                    width: 120,
+                    sort: true,
+                    title: '核对',
+                },
+                {
+                    field: 'fdate',
+                    width: 120,
+                    sort: true,
+                    title: '开单日期',
+                },
+                {
+                    field: 'companyid',
+                    width: 120,
+                    sort: true,
+                    title: '门店',
+
+                },
+                {
+                    field: 'warehosueid',
+                    width: 120,
+                    sort: true,
+                    title: '仓库',
+                },
+                {
+                    field: 'user',
+                    width: 120,
+                    sort: true,
+                    title: '制单人',
+                },
+                {
+                    field: 'createtime',
+                    width: 120,
+                    sort: true,
+                    title: '创建时间',
+
+                },
+                {
+                    field: 'sumqty',
+                    width: 120,
+                    sort: true,
+                    title: '总数量',
+
+                },
+                {
+                    field: 'summount',
+                    width: 120,
+                    sort: true,
+                    title: '总金额',
+
+                },
+                {
+                    field: 'price',
+                    width: 120,
+                    sort: true,
+                    title: '价格',
+
+                },
+                {
+                    field: 'remark',
+                    width: 120,
+                    sort: true,
+                    title: '备注',
+                },
+                {
+                    field: 'fstate',
+                    width: 120,
+                    sort: true,
+                    title: '状态',
+                    templet: function(item) {
+                        var t = "-";
+                        if (item.ftate == 0) {
+                            t = '草稿';
+                        }else if (item.fstate==1) {
+                            t = '审核';
+                        }else if (item.fstate==4) {
+                            t = '作废';
+                        }
+                        return t;
+                    }
+
+                },
+                // {
+                //     field: 'checker',
+                //     width: 120,
+                //     sort: true,
+                //     title: '审核人',
+                // },
+                // {
+                //     field: 'check_date',
+                //     width: 120,
+                //     sort: true,
+                //     title: '审核日期',
+                //
+                // },
+                // {
+                //     field: 'notchecker',
+                //     width: 120,
+                //     sort: true,
+                //     title: '反审核人',
+                //
+                // },
+                // {
+                //     field: 'notcheckdate',
+                //     width: 120,
+                //     sort: true,
+                //     title: '反审核日期',
+                //
+                // },
+                // {
+                //     field: 'lastupdater',
+                //     width: 120,
+                //     sort: true,
+                //     title: '最后更新人',
+                //
+                // },
+                // {
+                //     field: 'lastupdatetime',
+                //     width: 120,
+                //     sort: true,
+                //     title: '最后更改时间',
+                //
+                // },
+                // {
+                //     field: 'flag',
+                //     width: 120,
+                //     sort: true,
+                //     title: '标志位',
+                //
+                // },
+                // {
+                //     field: 'passnoid',
+                //     width: 120,
+                //     sort: true,
+                //     title: '序列号',
+                //
+                // },
+                // {
+                //     field: 'step',
+                //     width: 120,
+                //     sort: true,
+                //     title: '操作步骤',
+                //
+                // },
+                // {
+                //     field: 'priorstate',
+                //     width: 120,
+                //     sort: true,
+                //     title: '上个状态',
+                //
+                // },
+                // {
+                //     field: 'priorcompanyid',
+                //     width: 120,
+                //     sort: true,
+                //     title: '上个门店',
+                //
+                // },
+                // {
+                //     field: 'priorwarehouseid',
+                //     width: 120,
+                //     sort: true,
+                //     title: '上个仓库',
+                //
+                // },
+                // {
+                //     field: 'priorbatchno',
+                //     width: 120,
+                //     sort: true,
+                //     title: '上个批次号',
+                //
+                // },
+                // {
+                //     field: 'checklister',
+                //     width: 120,
+                //     sort: true,
+                //     title: '核对人',
+                // },
+                // {
+                //     field: 'checklistdate',
+                //     width: 120,
+                //     sort: true,
+                //     title: '核对日期',
+                //
+                // },
+                // {
+                //     field: 'isdelete',
+                //     width: 120,
+                //     sort: true,
+                //     title: '已删除',
+                //
+                // },
+                // {
+                //     field: 'batchno',
+                //     width: 120,
+                //     sort: true,
+                //     title: '批次号',
+                //
+                // },
+'''
+# 新的需要匹配的字段数组
+newList=newText.strip().split('\n')
+def main(cols):
+    # 获取最新的字段list
+    # print(newList)
+
+    # reg=r"field:'(.+){1,10}',"
+    # rule=re.compile(reg)
+    # list=rule.findall(cols)
+    # 匹配替换
+    gg=re.sub(r"field:\s?'(.+){1,10}',", change, cols)
+    print(gg)
+
+    # for index in range(len(list)):
+    #     print(list[index])
+
+#对每个匹配的字段进行单独处理再放回去
+def change(one):
+    field=one.group(1)
+    # print(field)
+    if field.strip()=='':
+        return "field:'',"
+    else:
+        # 循环跟新的字段list匹配,替换
+        for newF in newList:
+            if newF.lower().find(field.lower())>=0:
+                field=newF
+                break
+        return "field:'"+field+"',"
+
+main(cols)

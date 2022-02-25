@@ -1,23 +1,20 @@
+#根据数字字典数据,生成layui页面的clos或者data临时数据
 import re
 
-
 str='''
-2 companyid int 4 门店id
-3 fdate datetime 8 日期
-4 fno varchar 30 凭证号
-5 rechecker varchar 50 复核
-6 manager varchar 50 记账
-7 super varchar 50 会计主管
-8 createtime datetime 8 创建时间
-9 lastupdater varchar 50 最后更新人
-10 lastupdatetime datetime 8 最后更改时间
-11 remark varchar 200 备注
-12 fstate smallint 2 状态0 草稿1 审核2 作废
-13 checker varchar 50 审核人
-14 checkdate datetime 8 审核日期
-15 notchecker varchar 50 反审核人
-16 notcheckdate datetime 8 反审核日期
-17 user varchar 50 操作人
+1	FID	int	4	fid
+2	Fno	varchar	30	编号
+3	Fname	varchar	50	名称
+4	Flag	smallint	2	标志位
+5	Type	smallint	2	类型0 配件1 整车
+6	Remark	varchar	200	备注
+7	IsZero	bit		默认价为零
+8	IsSelectUnit	bit		选择往来单位
+9	Type	smallint		出入库类型0 进货1 销售2 售后3 其他入库4 其他出库
+10	CreateTime	datetime	8	创建时间
+11	Fuser	varchar	50	制单人
+12	LastUpdater	varchar	50	最后更新人
+13	LastUpdateTime	datetime	8	最后更改时间
 '''
 str=str.replace("√","")
 
@@ -29,7 +26,7 @@ def change(str):
         one=list[index].strip()
         if one!="":
             list[index]=one
-            oneList=one.split(' ')
+            oneList=one.split('\t')
             #解析成list
             #print(oneList[1])
             title=oneList[4: ]
@@ -49,9 +46,9 @@ def change(str):
             rule=re.compile(reg)
             rule2=re.compile(reg2)
             rule3=re.compile(reg3)
-            #字段名list
+            #if,else匹配的类型名
             typeList=rule.findall(titleStr)
-            #字段值list
+            #if,else匹配的类型id
             numList=rule2.findall(titleStr)
             #获取真正字段名
             titleList=rule3.findall(titleStr)
@@ -82,26 +79,25 @@ def change(str):
                     field:'"""+keyName+"""',
                     width:120,
                     sort:true,
-                    title:'"""+titleStr+"""',
-                    """+templet+"""
+                    title:'"""+titleStr+"""',"""+templet+"""
                 },"""
             text+=textone
     print(text)
 
-def change2(str):
-    #去除换行
-    list=str.split('\n')
-    text=""
-    for index in range(len(list)):
-        one=list[index].strip()
-        if one!="":
-            list[index]=one
-            oneList=one.split(' ')
-            #解析成list
-            gg=index
-            textone='"'+oneList[1]+'":"1",\n'
-            text+=textone
-    print(text)
+# def change2(str):
+#     #去除换行
+#     list=str.split('\n')
+#     text=""
+#     for index in range(len(list)):
+#         one=list[index].strip()
+#         if one!="":
+#             list[index]=one
+#             oneList=one.split(' ')
+#             #解析成list
+#             gg=index
+#             textone='"'+oneList[1]+'":"1",\n'
+#             text+=textone
+#     print(text)
     
 change(str)
-change2(str)
+# change2(str)

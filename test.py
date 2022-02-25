@@ -1,3 +1,7 @@
-import webbrowser
+from turtle import clear
 
-webbrowser.open("http://localhost:8066/PyFor.html")
+
+str='111CarType222'
+text='Cartype'
+# print(str.lower().find(text.lower()))
+print(str.lower().find(text.lower()))
