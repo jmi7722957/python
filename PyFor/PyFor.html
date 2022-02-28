@@ -22,10 +22,10 @@
 		list-style:none;
 	}
 	li {
-    	height: 150px;
+    	height: 110px;
 	}
 	button {
-		height: 140px;
+		height: 100px;
 		width: 70px;
 	}
 </style>
@@ -96,9 +96,18 @@
 		var root=query.split("=")[1];
 		// console.log(root);
 		if(root){
+			console.log(root);
+			// root=charToUnicode(root)
+			//发送请求
 			sendGet(root);
 		}
 		return false;
+	}
+
+	// 汉字转码
+	function charToUnicode(char) {
+		const res = escape(char).toLocaleLowerCase().replace(/%u/gi, '\\u')
+		return res.replace(/%7b/gi, '{').replace(/%7d/gi, '}').replace(/%3a/gi, ':').replace(/%2c/gi, ',').replace(/%27/gi, '\'').replace(/%22/gi, '"').replace(/%5b/gi, '{').replace(/%5d/gi, ']').replace(/%3D/gi, '=').replace(/%20/gi, ' ').replace(/%3E/gi, '>').replace(/%3C/gi, '<').replace(/%3F/gi, '?').replace(/%5c/gi, '\\')
 	}
 
 	var imgData;
@@ -111,7 +120,7 @@
             async: true,
             success: function(data) {
 				imgData=data;
-            	// console.log(data);
+            	console.log(data);
 				createImg(imgData,1);
             },
 			error: function(request) {
@@ -125,7 +134,7 @@
 		var html="";
 		var oneList=data.pages[page-1];
 		oneList.forEach(element => {
-			html+='<img src="/localc'+data.path.substr(2)+'/'+element+'"><br/>';
+			html+='<img src="/local'+data.path.substr(0,1).toLowerCase()+data.path.substr(2)+'/'+element+'"><br/>';
 		});
 		html=html.replaceAll('\\','/');
 		$('.main').html(html);
@@ -135,7 +144,7 @@
 		// console.log(jsObject.page);
 		// console.log(imgData.pages);
 		if(imgData.pages[jsObject.page]){
-			jsObject.page=jsObject.page+1
+			jsObject.page=Number(jsObject.page)+1
 			createImg(imgData,jsObject.page)
 		}else{
 			alert('已是最后一页');
@@ -143,7 +152,7 @@
 	}
 	function last(){
 		if(jsObject.page>1){
-			jsObject.page=jsObject.page-1;
+			jsObject.page=Number(jsObject.page)-1;
 			createImg(imgData,jsObject.page)
 		}else{
 			alert('已是第一页');
