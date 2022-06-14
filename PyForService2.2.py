@@ -43,6 +43,6 @@ def calculatePost():
     return jsonify(res)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', threaded=True, debug=False, port=8070)
+    app.run(host='0.0.0.0', threaded=True, debug=True, port=8070)
 
 calculatePost()
