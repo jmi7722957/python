@@ -4,23 +4,43 @@ from tokenize import Double
 
 #循环处理拼接字符串(scnd代码转正常)
 str='''
- 1 def fun(num):
- 2     count = int(num/2)
- 3     while count>1:
- 4         if(num%count == 0):
- 5             print("%d的最大公约数是：%d" %(num,count))
- 6             break
- 7         count -= 1
- 8     else:
- 9         print("%d是素数" %num)
-10 
-11 n = int(input("请输入一个整数："))
-12 fun(n)
+                    <div style="text-align: center;padding: 20px;">
+                        <img class="layui-col-md3 layui-block" src="../src/img/no-data.png" />
+                        <div class="layui-col-md3 layui-block" style="color: #4f7aa3;">当前没有投诉记录</div>
+                    </div>
 '''
 def change(str):
     strlist=str.split("\n")
     for li in strlist:
         print(li[2:])
+# change(str)
+
+
+#html转js string
+str='''
+<div style="text-align: center;padding: 20px;">
+    <img class="layui-col-md3 layui-block" src="../src/img/no-data.png" />
+    <div class="layui-col-md3 layui-block" style="color: #4f7aa3;">当前没有投诉记录</div>
+</div>
+<div class="follow-record follow-record_div{{ item.id}}">
+    <div class="items layui-panel">
+        <div class="fu-right">
+            <div><span class="type">投诉门店：{{ item.storeName}}</span></div>
+            <div><span class="time">状态：{{ item.status}}</span></div>
+            <div><span class="time">投诉业务员：{{ item.employeeName}}</span></div>
+            <div><span class="time">投诉时间：{{ item.createTm}}</span></div>
+            <div><span class="time">投诉内容：{{ item.content}}</span></div>
+            <div><span class="time">回复人：{{ item.operator}}</span></div>
+            <div><span class="time">回复时间：{{ item.operationTm}}</span></div>
+            <div><span class="time">回复内容：{{ item.result}}</span></div>
+        </div>
+    </div>
+</div>
+'''
+def change(str):
+    strlist=str.split("\n")
+    for li in strlist:
+        print("'"+li+"'+")
 change(str)
 
 
